@@ -9,13 +9,13 @@
 
 <section layout:fragment="conteudo">
 	<div class="titulo">
-		<form method="POST" action="/titulos" th:object="${titulo}">
+		<form method="POST" th:action="@{/titulos}" th:object="${titulo}">
 			<div th:replace="MensagensErro"></div>
 			
 			<div class="card">
 				<div class="card-header clear-fix">
 					<h5 class="aw-titulo-panel">Novo Título</h5>
-					<a class="btn btn-link aw-link-panel" href="/titulos">
+					<a class="btn btn-link aw-link-panel" th:href="@{/titulos}">
 						Voltar para pesquisa
 					</a>
 				</div>
