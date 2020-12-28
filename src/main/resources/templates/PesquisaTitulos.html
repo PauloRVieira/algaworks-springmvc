@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns="https://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="~{LayoutPadrao}">
+<head>
+<title>Pesquisa de Título</title>
+</head>
+
+<section layout:fragment="conteudo">
+	<div class="titulo">
+		<div class="card">
+			<div class="card-header clear-fix">
+				<h5 class="aw-titulo-panel">Pesquisa de Títulos</h5>
+				<a class="btn btn-link aw-link-panel" href="/titulos/novo">Novo
+					título</a>
+			</div>
+			<div class="card-body">
+				<form method="GET" action="/titulos" th:object="${filtro}">
+					<div class="form-group row">
+						<div class="col-sm-4">
+							<div class="input-group">
+							  <input class="form-control" th:field="*{descricao}" placeholder="Qual o título você está procurando?" autofocus="autofocus">
+							  	<button type="submit" class="btn btn-secondary">
+							  		pesquisar
+							  	</button>
+							</div>
+						</div>
+					</div>
+				</form>
+
+				<table class="table table-bordered table-striped clearfix">
+					<thead>
+						<tr>
+							<th class="text-center">#</th>
+							<th>Descrição</th>
+							<th class="text-center">Data de Vencimento</th>
+							<th class="text-right">Valor</th>
+							<th class="text-center">Status</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:if="${#lists.isEmpty(titulos)}">
+							<td colspan="6">Nenhum titulo encontrado</td>
+						</tr>
+						<tr th:each="titulo : ${titulos}">
+							<td class="text-center" th:text="${titulo.codigo}"></td>
+							<td th:text="${titulo.descricao}"></td>
+							<td class="text-center" th:text="${{titulo.dataVencimento}}"></td>
+							<td class="text-right" th:text="|R$ ${{titulo.valor}}|"></td>
+							<td class="text-center" th:attr="data-status=${titulo.codigo}">
+								<span class="badge" th:text="${titulo.status.descricao}"
+								th:classappend="${titulo.pendente ? 'badge-warning' : 'badge-success'}">
+							</span>
+							</td>
+							<td class="text-center"><a class="btn btn-default btn-sm"
+								th:href="@{/titulos/{codigo}(codigo=${titulo.codigo})}"> <svg
+										width="1em" height="1em" viewBox="0 0 16 16"
+										class="bi bi-pencil" fill="blue"
+										xmlns="http://www.w3.org/2000/svg" title="Editar"
+										data-toggle="tooltip" data-placement="top">
+  										<path fill-rule="evenodd"
+											d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5L13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175l-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z" />
+									</svg>
+							</a> <a class="btn btn-default btn-sm" data-toggle="modal"
+								data-target="#confirmacaoExclusaoModal"
+								th:attr="data-codigo=${titulo.codigo}, data-descricao=${titulo.descricao}">
+									<svg width="1em" height="1em" viewBox="0 0 16 16"
+										class="bi bi-trash" fill="red"
+										xmlns="http://www.w3.org/2000/svg" title="Excluir"
+										data-toggle="tooltip" data-placement="top">
+								  		<path
+											d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" />
+								  		<path fill-rule="evenodd"
+											d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" />
+									</svg>
+							</a> <a class="btn btn-default btn-sm js-atualizar-status"
+								th:attr="data-codigo=${titulo.codigo}"
+								th:if="${titulo.pendente}"
+								th:href="@{/titulos/{codigo}/receber(codigo=${titulo.codigo})}">
+									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+										fill="green" class="bi bi-check2-square" viewBox="0 0 16 16"
+										title="Receber" data-toggle="tooltip" data-placement="top">
+									  <path fill-rule="evenodd"
+											d="M15.354 2.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L8 9.293l6.646-6.647a.5.5 0 0 1 .708 0z" />
+									  <path fill-rule="evenodd"
+											d="M1.5 13A1.5 1.5 0 0 0 3 14.5h10a1.5 1.5 0 0 0 1.5-1.5V8a.5.5 0 0 0-1 0v5a.5.5 0 0 1-.5.5H3a.5.5 0 0 1-.5-.5V3a.5.5 0 0 1 .5-.5h8a.5.5 0 0 0 0-1H3A1.5 1.5 0 0 0 1.5 3v10z" />
+									</svg>
+							</a></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		<div th:replace="DialogoConfirmacaoExclusao"></div>
+	</div>
+</section>
+
+</html>
